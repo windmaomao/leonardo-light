@@ -7,9 +7,11 @@
 
 void watchdogSetup(void)
 {
+  cli();
   wdt_reset();
-  wdt_enable(WDTO_8S);
-  WDTCSR |= (1 << WDIE);
+  WDTCSR |= (1 << WDCE) | (1 << WDE);
+  WDTCSR = (1 << WDIE) | (1 << WDP3); // 4s / interrupt, no system reset
+  sei();
 }
 
 void setup(void)
@@ -22,7 +24,7 @@ void setup(void)
   pinMode(LED_G, OUTPUT);
   pinMode(LED_B, OUTPUT);
 
-  //  watchdogSetup();
+  watchdogSetup();
 }
 
 void lightup(void)
@@ -49,5 +51,5 @@ void loop(void)
 
 ISR(WDT_vect)
 {
-  Serial.println("....but I will print this before I reset");
+  Serial.println("interrupt");
 }
