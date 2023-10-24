@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <avr/wdt.h>
 
 #define LED_R A3
 #define LED_G A2
@@ -6,11 +7,9 @@
 
 void watchdogSetup(void)
 {
-  cli();
-  asm("WDR");
-  WDTCSR |= (1 << WDCE) | (1 << WDE);
-  WDTCSR = (1 << WDE) | (1 << WDP3); // 4s / no interrupt, system reset
-  sei();
+  wdt_reset();
+  wdt_enable(WDTO_8S);
+  WDTCSR |= (1 << WDIE);
 }
 
 void setup(void)
@@ -23,7 +22,7 @@ void setup(void)
   pinMode(LED_G, OUTPUT);
   pinMode(LED_B, OUTPUT);
 
-  // watchdogSetup();
+  //  watchdogSetup();
 }
 
 void lightup(void)
@@ -46,4 +45,9 @@ void loop(void)
 {
   lightup();
   Serial.println("lightup");
+}
+
+ISR(WDT_vect)
+{
+  Serial.println("....but I will print this before I reset");
 }
