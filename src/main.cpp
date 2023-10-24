@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <avr/wdt.h>
+#include <avr/sleep.h>
 
 #define LED_R A3
 #define LED_G A2
@@ -10,7 +11,7 @@ void watchdogSetup(void)
   cli();
   wdt_reset();
   WDTCSR |= (1 << WDCE) | (1 << WDE);
-  WDTCSR = (1 << WDIE) | (1 << WDP3); // 4s / interrupt, no system reset
+  WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0); // 8s / interrupt, no system reset
   sei();
 }
 
@@ -27,8 +28,9 @@ void setup(void)
   watchdogSetup();
 }
 
-void lightup(void)
+void lightUp(void)
 {
+  Serial.println("light");
   digitalWrite(LED_R, HIGH);
   delay(1000);
   digitalWrite(LED_R, LOW);
@@ -43,10 +45,18 @@ void lightup(void)
   delay(10);
 }
 
+void sleepNow()
+{
+  Serial.println("sleep");
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  sleep_mode();
+  sleep_disable();
+}
+
 void loop(void)
 {
-  lightup();
-  Serial.println("lightup");
+  lightUp();
+  sleepNow();
 }
 
 ISR(WDT_vect)
