@@ -12,7 +12,20 @@ void setup(void)
   pinMode(LED_B, OUTPUT);
 }
 
+void lightup(void)
+{
+  digitalWrite(LED_R, HIGH);
+  delay(1000);
+  digitalWrite(LED_R, LOW);
+  digitalWrite(LED_G, HIGH);
+  delay(1000);
+  digitalWrite(LED_G, LOW);
+  digitalWrite(LED_B, HIGH);
+  delay(1000);
+  digitalWrite(LED_B, LOW);
+}
+
 void loop(void)
 {
-  digitalWrite(LED_B, HIGH);
+  lightup();
 }
