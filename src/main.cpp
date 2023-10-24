@@ -24,29 +24,30 @@ void setup(void)
   pinMode(LED_R, OUTPUT);
   pinMode(LED_G, OUTPUT);
   pinMode(LED_B, OUTPUT);
+}
 
-  watchdogSetup();
+void flash(uint8_t pin, int start, int stop)
+{
+  digitalWrite(pin, HIGH);
+  delay(start);
+  digitalWrite(pin, LOW);
+  delay(stop);
 }
 
 void lightUp(void)
 {
   Serial.println("light");
-  digitalWrite(LED_R, HIGH);
-  delay(1000);
-  digitalWrite(LED_R, LOW);
-  delay(10);
-  digitalWrite(LED_G, HIGH);
-  delay(1000);
-  digitalWrite(LED_G, LOW);
-  delay(10);
-  digitalWrite(LED_B, HIGH);
-  delay(1000);
-  digitalWrite(LED_B, LOW);
-  delay(10);
+  flash(LED_R, 1000, 10);
+  flash(LED_G, 1000, 10);
+  flash(LED_B, 1000, 10);
+  flash(LED_R, 1000, 10);
+  flash(LED_G, 1000, 10);
+  flash(LED_B, 1000, 10);
 }
 
 void sleepNow()
 {
+  watchdogSetup();
   Serial.println("sleep");
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_mode();
