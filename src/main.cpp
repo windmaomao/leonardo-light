@@ -7,15 +7,15 @@
 #define LED_B A1
 #define LIGHT_PIN (8)
 
-#define LIGHTON_THRESHOLD (35)
+#define LIGHTON_THRESHOLD (2)
 
 void watchdogSetup(void)
 {
   cli();
   wdt_reset();
   WDTCSR |= (1 << WDCE) | (1 << WDE);
-  // WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0); // 8s / interrupt, no system reset
-  WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP2) | (1 << WDP1) | (1 << WDP0); // 2s / interrupt, no system reset
+  WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0); // 8s / interrupt, no system reset
+  // WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP2) | (1 << WDP1) | (1 << WDP0); // 2s / interrupt, no system reset
   sei();
 }
 
@@ -43,18 +43,12 @@ void flash(uint8_t pin, int start, int stop)
 void lightUp(void)
 {
   Serial.println("light");
-  flash(LED_R, 1000, 10);
-  flash(LED_G, 1000, 10);
-  flash(LED_B, 1000, 10);
-  flash(LED_R, 500, 10);
-  flash(LED_G, 500, 10);
-  flash(LED_B, 500, 10);
-  flash(LED_R, 200, 10);
-  flash(LED_G, 200, 10);
-  flash(LED_B, 200, 10);
-  flash(LED_R, 100, 10);
-  flash(LED_G, 100, 10);
-  flash(LED_B, 100, 10);
+  flash(LED_R, 2000, 10);
+  flash(LED_G, 2000, 10);
+  flash(LED_B, 2000, 10);
+  flash(LED_R, 2000, 10);
+  flash(LED_G, 2000, 10);
+  flash(LED_B, 2000, 10);
 }
 
 void sleepNow()
@@ -79,10 +73,6 @@ void loop(void)
   if (c < LIGHTON_THRESHOLD)
   {
     lightUp();
-  }
-  else
-  {
-    delay(5000);
   }
   sleepNow();
 }
