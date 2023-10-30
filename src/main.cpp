@@ -2,12 +2,14 @@
 #include <avr/wdt.h>
 #include <avr/sleep.h>
 
+#define DISABLE_SLEEP 0
 #define LED_R A3
 #define LED_G A2
 #define LED_B A1
 #define LIGHT_PIN (8)
+#define LIGHTON_THRESHOLD (1)
 
-#define LIGHTON_THRESHOLD (2)
+int counter = 0;
 
 void watchdogSetup(void)
 {
@@ -53,6 +55,11 @@ void lightUp(void)
 
 void sleepNow()
 {
+  if (DISABLE_SLEEP == 1)
+  {
+    return;
+  }
+  flash(LED_R, 50, 10);
   watchdogSetup();
   Serial.println("sleep");
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
