@@ -7,7 +7,7 @@
 #define LED_B A1
 #define LIGHT_PIN (8)
 #define LIGHTON_THRESHOLD (1)
-#define MAX_CYCLES (1)
+#define MAX_CYCLES (600)
 
 int counter = MAX_CYCLES;
 
@@ -53,6 +53,11 @@ void lightUp(void)
   flash(LED_B, 2000, 10);
 }
 
+void heartBeat(uint8_t pin)
+{
+  flash(pin, 50, 10);
+}
+
 void sleepNow()
 {
   watchdogSetup();
@@ -69,25 +74,36 @@ int readLight()
   return light;
 }
 
+bool isDark()
+{
+  return readLight() < LIGHTON_THRESHOLD;
+}
+
 void loop(void)
 {
   if (counter > 0)
   {
-    int c = readLight();
-    if (c < LIGHTON_THRESHOLD)
+    if (isDark())
     {
       lightUp();
       counter--;
     }
     else
     {
-      flash(LED_G, 50, 10);
+      heartBeat(LED_G);
       counter = MAX_CYCLES;
     }
   }
   else
   {
-    flash(LED_R, 50, 10);
+    if (!isDark())
+    {
+      counter = MAX_CYCLES;
+    }
+    else
+    {
+      heartBeat(LED_R);
+    }
   }
   sleepNow();
 }
