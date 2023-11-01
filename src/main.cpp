@@ -1,25 +1,16 @@
 #include <Arduino.h>
 #include <avr/wdt.h>
 #include <avr/sleep.h>
+#include <LowPower.h>
 
 #define LED_R A3
 #define LED_G A2
 #define LED_B A1
 #define LIGHT_PIN (8)
 #define LIGHTON_THRESHOLD (1)
-#define MAX_CYCLES (600)
+#define MAX_CYCLES (360)
 
 int counter = MAX_CYCLES;
-
-void watchdogSetup(void)
-{
-  cli();
-  wdt_reset();
-  WDTCSR |= (1 << WDCE) | (1 << WDE);
-  WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0); // 8s / interrupt, no system reset
-  // WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP2) | (1 << WDP1) | (1 << WDP0); // 2s / interrupt, no system reset
-  sei();
-}
 
 void setup(void)
 {
@@ -60,7 +51,6 @@ void heartBeat(uint8_t pin)
 
 void sleepNow()
 {
-  watchdogSetup();
   Serial.println("sleep");
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_mode();
@@ -105,10 +95,7 @@ void loop(void)
       heartBeat(LED_R);
     }
   }
-  sleepNow();
-}
 
-ISR(WDT_vect)
-{
-  Serial.println("interrupt");
+  // LowPower.idle(SLEEP_8S, ADC_OFF, TIMER4_OFF, TIMER3_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART1_OFF, TWI_OFF, USB_OFF);
+  LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
 }
